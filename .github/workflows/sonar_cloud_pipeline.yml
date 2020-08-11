@@ -1,6 +1,6 @@
 on:
   # Trigger analysis when pushing in master or pull requests, and when creating
-  # a pull request. 
+  # a pull request.
   push:
     branches:
       - master
@@ -8,42 +8,62 @@ on:
   #     types: [opened, synchronize, reopened]
 name: Main Workflow
 
+env:
+  WEBAPP_SOLUTION: "Testing_SonarCloud_GH_Actions/Testing_SonarCloud_GH_Actions.sln"
+
 jobs:
-  build:
-    runs-on: windows-latest
+  # build:
+  #   runs-on: windows-latest
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+  #   steps:
+  #   - name: Checkout code
+  #     uses: actions/checkout@v2
 
-    - name: Setup MSBuild Path
-      uses: warrenbuckley/Setup-MSBuild@v1
+  # - name: Setup MSBuild Path
+  #   uses: warrenbuckley/Setup-MSBuild@v1
 
-    - name: Setup VSTest Path
-      uses: darenm/Setup-VSTest@v1
+  # - name: Setup VSTest Path
+  #   uses: darenm/Setup-VSTest@v1
 
-    - name: Setup NuGet
-      uses: NuGet/setup-nuget@v1.0.2
+  # - name: Setup NuGet
+  #   uses: NuGet/setup-nuget@v1.0.2
 
-    - name: Restore packages
-      run: msbuild .\Testing_SonarCloud_GH_Actions/Testing_SonarCloud_GH_Actions.sln -t:restore
+  # - name: Restore packages
+  #   run: msbuild .\Testing_SonarCloud_GH_Actions/Testing_SonarCloud_GH_Actions.sln #-t:restore
 
-    - name: Debug Build UWP app
-      run: msbuild .\Testing_SonarCloud_GH_Actions/Testing_SonarCloud_GH_Actions.sln /p:Configuration=Debug /p:AppxBundlePlatforms="x86|x64|ARM" /p:AppxPackageDir=".\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload
-      
-    - name: VSTest
-      run: vstest.console.exe Tests\bin\Debug\Tests.dll /EnableCodeCoverage /Settings:runSettings.runsettings
+  # - name: Debug Build UWP app
+  #   run: msbuild .\Testing_SonarCloud_GH_Actions/Testing_SonarCloud_GH_Actions.sln /p:Configuration=Debug /p:AppxBundlePlatforms="x86|x64|ARM" /p:AppxPackageDir=".\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload
 
+  ###############
+  # - name: Setup NuGet
+  #   uses: NuGet/setup-nuget@v1.0.2
+
+  # - name: Restore NuGet packages
+  #   run: nuget restore ${{ env.WEBAPP_SOLUTION }}
+
+  # - name: Add msbuild to PATH
+  #   uses: microsoft/setup-msbuild@v1.0.0
+  #   with:
+  #     vs-version: "[16.4,16.9)"
+
+  # - name: Setup VSTest Path
+  #   uses: darenm/Setup-VSTest@v1
+
+  # - name: Build and publish to folder
+  #   run: msbuild ${{ env.WEBAPP_SOLUTION }} /p:Configuration=Release /p:DeployOnBuild=true /p:PackageAsSingleFile=false
+
+  # - name: VSTest
+  #   run: vstest.console.exe Testing_SonarCloud_GH_Actions\Tests\obj\Release\Tests.dll /EnableCodeCoverage /Settings:runSettings.runsettings
   sonarcloud:
     runs-on: ubuntu-latest
-    needs: build
+    # needs: build
     steps:
-    - uses: actions/checkout@v2
-      with:
-        # Disabling shallow clone is recommended for improving relevancy of reporting
-        fetch-depth: 0
-    - name: SonarCloud Scan
-      uses: sonarsource/sonarcloud-github-action@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - uses: actions/checkout@v2
+        with:
+          # Disabling shallow clone is recommended for improving relevancy of reporting
+          fetch-depth: 0
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
