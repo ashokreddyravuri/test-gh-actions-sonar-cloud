@@ -1,3 +1,6 @@
+language: csharp
+solution: "./Testing_SonarCloud_GH_Actions/Testing_SonarCloud_GH_Actions.sln"
+
 addons:
   sonarcloud:
     organization: "nicosocoro"
