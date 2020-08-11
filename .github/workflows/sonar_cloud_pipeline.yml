@@ -32,7 +32,7 @@ jobs:
     #   run: msbuild .\Testing_SonarCloud_GH_Actions/Testing_SonarCloud_GH_Actions.sln /p:Configuration=Debug /p:AppxBundlePlatforms="x86|x64|ARM" /p:AppxPackageDir=".\AppxPackages" /p:AppxBundle=Always /p:UapAppxPackageBuildMode=StoreUpload
       
     - name: VSTest
-      run: vstest.console.exe .\test-sonarcloud-projects\Tests\bin\Debug\Tests.dll /EnableCodeCoverage /Settings:runSettings.runsettings
+      run: vstest.console.exe Tests\bin\Debug\Tests.dll /EnableCodeCoverage /Settings:runSettings.runsettings
 
   sonarcloud:
     runs-on: ubuntu-latest
